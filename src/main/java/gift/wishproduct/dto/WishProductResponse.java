@@ -11,7 +11,7 @@ public class WishProductResponse {
     private int price;
     private int quantity;
     private String imageUrl;
-
+  
     public WishProductResponse(WishProduct wishProduct) {
         this.id = wishProduct.getId();
         this.productName = wishProduct.getProduct().getName();

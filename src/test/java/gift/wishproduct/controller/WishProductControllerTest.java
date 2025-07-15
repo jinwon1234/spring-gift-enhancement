@@ -46,7 +46,7 @@ class WishProductControllerTest {
 
     @Autowired
     private JWTUtil jwtUtil;
-
+  
     private Member member;
     private Product product;
 

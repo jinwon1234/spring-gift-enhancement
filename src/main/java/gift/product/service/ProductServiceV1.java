@@ -68,7 +68,6 @@ public class ProductServiceV1 implements ProductService{
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
 
         Member findMember = memberService.findByEmail(authMember.getEmail());
-
         checkIsAdminOrOwner(authMember, findMember, findProduct.getMember().getId());
 
         findProduct.changeName(dto.getName());
