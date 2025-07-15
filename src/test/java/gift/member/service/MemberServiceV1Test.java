@@ -186,7 +186,6 @@ class MemberServiceV1Test {
         memberService.changePassword(member.getEmail(), updateRequest);
 
         verify(memberRepository).findByEmail(member.getEmail());
-        verify(memberRepository).update(any(Member.class));
         verifyNoMoreInteractions(memberRepository);
     }
 

@@ -24,9 +24,17 @@
                         window.location.href = '/admin/members';
                     },
                     error: (jqXHR) => {
-                        let msg = "회원 추가 실패";
-                        if (jqXHR.responseJSON?.message) msg = jqXHR.responseJSON.message;
-                        alert(msg);
+                        const response = jqXHR.responseJSON;
+                        let message = "회원 추가 실패";
+                        if (response) {
+                            if (response.fieldErrors) {
+                                message = Object.values(response.fieldErrors).join('\n');
+                            } else if (response.globalErrors) {
+                                message = response.globalErrors.map(err => err.message).join('\n');
+                            }
+                        }
+
+                        alert(message);
                     }
                 });
             });

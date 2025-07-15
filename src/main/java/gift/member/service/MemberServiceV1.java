@@ -62,7 +62,7 @@ public class MemberServiceV1 implements MemberService{
 
         String encodedPassword =  passwordEncoder.encode(memberUpdateRequest.getNewPassword());
 
-        memberRepository.update(new Member(member.getId(), member.getEmail(), encodedPassword, member.getRole()));
+        member.changePassword(encodedPassword);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class MemberServiceV1 implements MemberService{
 
         String encodedPassword =  passwordEncoder.encode(memberUpdateReqForAdmin.getNewPassword());
 
-        memberRepository.update(new Member(member.getId(), member.getEmail(),
-                encodedPassword, Role.valueOf(memberUpdateReqForAdmin.getRole())));
+        member.changePassword(encodedPassword);
+        member.changeRole(Role.valueOf(memberUpdateReqForAdmin.getRole()));
     }
 
     @Override

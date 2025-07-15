@@ -1,8 +1,8 @@
 create table if not exists member (
                         id binary(16),
-                        email varchar(255),
-                        password varchar(255),
-                        role varchar(255),
+                        email varchar(255) not null unique,
+                        password varchar(255) not null,
+                        role varchar(255) not null check(role in('REGULAR', 'ADMIN')),
                         primary key(id)
 );
 

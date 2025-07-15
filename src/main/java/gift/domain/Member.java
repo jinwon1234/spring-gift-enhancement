@@ -1,15 +1,22 @@
 package gift.domain;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
 public class Member {
 
+    @Id
     private UUID id;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public Member(String email, String password, Role role) {
@@ -43,5 +50,14 @@ public class Member {
 
     public Role getRole() {
         return role;
+    }
+
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void changeRole(Role role) {
+        this.role = role;
     }
 }
