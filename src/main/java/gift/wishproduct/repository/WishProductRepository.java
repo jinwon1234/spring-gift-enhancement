@@ -1,31 +1,20 @@
 package gift.wishproduct.repository;
 
 import gift.domain.WishProduct;
-import gift.wishproduct.dto.WishProductResponse;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface WishProductRepository {
-
-    WishProduct save(WishProduct wishProduct);
-
-    Optional<WishProduct> findById(UUID id);
-
-    List<WishProduct> findByOwnerId(UUID ownerId);
-
-    List<WishProductResponse> findWithProductByOwnerId(UUID ownerId);
-
-    List<WishProduct> findByProductId(UUID productId);
+public interface WishProductRepository extends JpaRepository<WishProduct, UUID> {
 
 
-    Optional<WishProduct> findByOwnerIdAndProductId(UUID memberId, UUID productId);
+    @Query("select w from WishProduct w where w.product.id = :productId and w.owner.id = :ownerId")
+    Optional<WishProduct> findByOwnerIdAndProductId(UUID ownerId, UUID productId);
 
-    void deleteById(UUID id);
 
-    void update(WishProduct wishProduct);
-
-    void deleteAll();
-
+    @Query("select w from WishProduct w join fetch w.product where w.owner.id = :ownerId")
+    List<WishProduct> findWithProductByOwnerId(UUID ownerId);
 }

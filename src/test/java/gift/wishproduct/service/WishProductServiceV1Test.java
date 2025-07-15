@@ -104,7 +104,6 @@ class WishProductServiceV1Test {
         assertThat(updatedId).isEqualTo(wishProduct.getId());
         verify(productService).findById(product.getId());
         verify(memberService).findByEmail(member.getEmail());
-        verify(wishProductRepository).update(any(WishProduct.class));
         verify(wishProductRepository).findByOwnerIdAndProductId(member.getId(), product.getId());
         verifyNoMoreInteractions(wishProductRepository, productService, memberService);
     }
@@ -166,8 +165,7 @@ class WishProductServiceV1Test {
                 .willReturn(member);
 
         given(wishProductRepository.findWithProductByOwnerId(member.getId()))
-                .willReturn(List.of(new WishProductResponse(wishProduct.getId(), product.getName(),
-                        product.getPrice(), wishProduct.getQuantity(), product.getImageURL())));
+                .willReturn(List.of(wishProduct));
 
         // when
         List<WishProductResponse> result = wishProductService.findByEmail(member.getEmail());
@@ -256,7 +254,6 @@ class WishProductServiceV1Test {
 
         verify(wishProductRepository).findById(wishProduct.getId());
         verify(memberService).findByEmail(member.getEmail());
-        verify(wishProductRepository).update(any(WishProduct.class));
         verifyNoMoreInteractions(wishProductRepository, memberService, productService);
     }
 
@@ -296,12 +293,12 @@ class WishProductServiceV1Test {
     }
 
     private Product addProductCase(Member member) {
-        return new Product("스윙칩",3000, "data:image/~base64,",member.getId());
+        return new Product("스윙칩",3000, "data:image/~base64,",member);
     }
 
     private WishProduct addWishProduct(Product product, Member member, int quantity) {
         return new WishProduct(quantity,
-                member.getId(), product.getId());
+                member, product);
     }
 
 }

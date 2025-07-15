@@ -24,6 +24,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishProduct> wishProducts = new ArrayList<>();
+
     public Member(String email, String password, Role role) {
         this.id = UUID.randomUUID();
         this.email = email;

@@ -47,16 +47,17 @@ class WishProductControllerTest {
     @Autowired
     private JWTUtil jwtUtil;
 
-    private final UUID memberId = UUID.randomUUID();
-    private final UUID productId = UUID.randomUUID();
+    private Member member;
+    private Product product;
 
     RestClient restClient;
 
 
     @BeforeEach
     void setUp() {
-        Member member = memberRepository.save(new Member(memberId,"ljw2109@naver.com", "Qwer1234!!", Role.REGULAR));
-        productRepository.save(new Product(productId,"스윙칩", 3000, "data:image/~base64",memberId));
+        member = memberRepository.save(new Member("ljw2109@naver.com", "Qwer1234!!", Role.REGULAR));
+        Product save = productRepository.save(new Product("스윙칩", 3000, "data:image/~base64", member));
+        product = save;
 
         String token = jwtUtil
                 .createJWT(member.getEmail(), member.getRole().toString(), 1000 * 60L);
@@ -79,7 +80,7 @@ class WishProductControllerTest {
     void addWishProductSuccess() {
 
         // given
-        WishProductCreateReq dto = new WishProductCreateReq(productId, 10);
+        WishProductCreateReq dto = new WishProductCreateReq(product.getId(), 10);
 
         // when
         ResponseEntity<Void> response = restClient.post()
@@ -176,7 +177,7 @@ class WishProductControllerTest {
 
 
     private WishProduct addWishProduct() {
-        WishProduct wishProduct = new WishProduct(10, memberId, productId);
+        WishProduct wishProduct = new WishProduct(10, member, product);
 
         return wishProductRepository.save(wishProduct);
     }

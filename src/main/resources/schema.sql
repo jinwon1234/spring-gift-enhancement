@@ -23,5 +23,5 @@ create table if not exists wish_product(
                         product_id binary(16),
                         primary key(id),
                         foreign key (owner_id) references member(id) on delete cascade,
-                        foreign key (product_id) references productgi(id) on delete cascade
+                        foreign key (product_id) references product(id) on delete cascade
 )
