@@ -32,7 +32,8 @@ public class ProductServiceV1 implements ProductService{
 
     public UUID save(ProductCreateRequest dto, String email) {
         Member findMember = memberService.findByEmail(email);
-        return productRepository.save(new Product(dto.getName(), dto.getPrice(), dto.getImageURL(), findMember.getId()));
+        Product save = productRepository.save(new Product(dto.getName(), dto.getPrice(), dto.getImageURL(), findMember));
+        return save.getId();
     }
 
     public List<ProductResponse> findAllProducts() {
@@ -55,7 +56,7 @@ public class ProductServiceV1 implements ProductService{
 
         Member findMember = memberService.findByEmail(authMember.getEmail());
 
-        checkIsAdminOrOwner(authMember,findMember, findProduct.getMemberId());
+        checkIsAdminOrOwner(authMember,findMember, findProduct.getMember().getId());
 
         productRepository.deleteById(id);
     }
@@ -68,9 +69,11 @@ public class ProductServiceV1 implements ProductService{
 
         Member findMember = memberService.findByEmail(authMember.getEmail());
 
-        checkIsAdminOrOwner(authMember, findMember, findProduct.getMemberId());
+        checkIsAdminOrOwner(authMember, findMember, findProduct.getMember().getId());
 
-        productRepository.update(new Product(id, dto.getName(), dto.getPrice(), dto.getImageURL(), findMember.getId()));
+        findProduct.changeName(dto.getName());
+        findProduct.changePrice(dto.getPrice());
+        findProduct.changeImageUrl(dto.getImageURL());
     }
 
     @Override
@@ -86,11 +89,11 @@ public class ProductServiceV1 implements ProductService{
                 .orElseThrow(()->new NotFoundEntityException("존재하는 상품이 아닙니다"));
     }
 
-    private void checkIsAdminOrOwner(AuthMember authMember, Member member, UUID productMemberId) {
+    private void checkIsAdminOrOwner(AuthMember authMember, Member member,  UUID ownerId) {
 
         if (authMember.getRole() == Role.ADMIN) return;
 
-        if (!member.getId().equals(productMemberId))
+        if (!member.getId().equals(ownerId))
             throw new BadRequestEntityException("자신의 상품이 아닙니다.");
     }
 }

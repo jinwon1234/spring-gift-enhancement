@@ -1,31 +1,44 @@
 package gift.domain;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
 public class Product {
 
+    @Id
     private UUID id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private int price;
-    private String imageURL;
-    private UUID memberId;
+
+    @Column(nullable = false)
+    private String imageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     protected Product() {}
 
-    public Product(String name, int price, String imageURL, UUID memberId) {
+    public Product(String name, int price, String imageUrl, Member member) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.price = price;
-        this.imageURL = imageURL;
-        this.memberId = memberId;
+        this.imageUrl = imageUrl;
+        this.member = member;
     }
 
-    public Product(UUID id, String name, int price, String imageURL, UUID memberId) {
+    public Product(UUID id, String name, int price, String imageUrl, Member member) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.imageURL = imageURL;
-        this.memberId = memberId;
+        this.imageUrl = imageUrl;
+        this.member = member;
     }
 
     public UUID getId() {
@@ -40,11 +53,23 @@ public class Product {
         return price;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public UUID getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePrice(int price) {
+        this.price = price;
+    }
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

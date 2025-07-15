@@ -9,15 +9,15 @@ public class ProductResponse {
     private UUID id;
     private String name;
     private int price;
-    private String imageURL;
+    private String imageUrl;
     private UUID memberId;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
-        this.imageURL = product.getImageURL();
-        this.memberId = product.getMemberId();
+        this.imageUrl = product.getImageUrl();
+        this.memberId = product.getMember().getId();
     }
 
     protected ProductResponse() {}
@@ -34,8 +34,8 @@ public class ProductResponse {
         return price;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public UUID getMemberId() {

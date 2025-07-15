@@ -42,7 +42,7 @@ class ProductServiceTest {
         assertThat(product.getId()).isEqualTo(findProduct.getId());
         assertThat(product.getName()).isEqualTo(findProduct.getName());
         assertThat(product.getPrice()).isEqualTo(findProduct.getPrice());
-        assertThat(product.getImageURL()).isEqualTo(findProduct.getImageURL());
+        assertThat(product.getImageUrl()).isEqualTo(findProduct.getImageUrl());
     }
 
     @Test
@@ -126,7 +126,7 @@ class ProductServiceTest {
 
         assertThat(response.getName()).isEqualTo(updateDto.getName());
         assertThat(response.getPrice()).isEqualTo(updateDto.getPrice());
-        assertThat(response.getImageURL()).isEqualTo(updateDto.getImageURL());
+        assertThat(response.getImageUrl()).isEqualTo(updateDto.getImageURL());
     }
 
     @Test
@@ -165,6 +165,6 @@ class ProductServiceTest {
 
     private Product addProductCase(Member member) {
         UUID uuid = productService.save(new ProductCreateRequest("스윙칩", 3000, "data:image/~base64,"), member.getEmail());
-        return new Product(uuid, "스윙칩", 3000, "data:image/~base64,",member.getId());
+        return new Product(uuid, "스윙칩", 3000, "data:image/~base64,",member);
     }
 }
