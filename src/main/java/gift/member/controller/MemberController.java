@@ -26,7 +26,7 @@ public class MemberController {
     @PostMapping()
     public ResponseEntity<Void> joinMember(@Valid @RequestBody MemberCreateRequest memberCreateRequest) {
 
-        UUID id = memberService.save(memberCreateRequest);
+        Long id = memberService.save(memberCreateRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).
                 location(LocationGenerator.generate(id)).build();
@@ -59,7 +59,7 @@ public class MemberController {
 
     @OnlyForAdmin
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
 
         memberService.deleteById(id);
 
@@ -69,7 +69,7 @@ public class MemberController {
     @OnlyForAdmin
     @PostMapping("/admin")
     public ResponseEntity<Void> addMemberForAdmin(@Valid @RequestBody MemberCreateReqForAdmin memberCreateReqForAdmin) {
-        UUID id = memberService.save(memberCreateReqForAdmin);
+        Long id = memberService.save(memberCreateReqForAdmin);
 
         return ResponseEntity.status(HttpStatus.CREATED).
                 location(LocationGenerator.generate(id)).build();
@@ -77,14 +77,14 @@ public class MemberController {
 
     @OnlyForAdmin
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> getMemberById(@PathVariable UUID id) {
+    public ResponseEntity<MemberResponse> getMemberById(@PathVariable Long id) {
         MemberResponse memberResponse = memberService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
     }
 
     @OnlyForAdmin
     @PutMapping("/{id}")
-    public ResponseEntity<Void> editMemberForAdmin(@PathVariable UUID id, @Valid @RequestBody MemberUpdateReqForAdmin memberUpdateReqForAdmin) {
+    public ResponseEntity<Void> editMemberForAdmin(@PathVariable Long id, @Valid @RequestBody MemberUpdateReqForAdmin memberUpdateReqForAdmin) {
         memberService.updateMemberForAdmin(id, memberUpdateReqForAdmin);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

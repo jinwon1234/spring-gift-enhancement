@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public interface WishProductService {
 
-    UUID save(WishProductCreateReq wishProductCreateReq, String email);
+    Long save(WishProductCreateReq wishProductCreateReq, String email);
 
     List<WishProductResponse> findByEmail(String email);
 
-    void deleteById(UUID id, String email);
+    void deleteById(Long id, String email);
 
-    void updateQuantity(UUID id, WishProductUpdateReq wishProductUpdateReq, String email);
+    void updateQuantity(Long id, WishProductUpdateReq wishProductUpdateReq, String email);
 }

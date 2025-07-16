@@ -63,17 +63,16 @@ class MemberServiceV1Test {
     @DisplayName("회원 조회 실패")
     void getMemberFail() {
 
-        UUID id = UUID.randomUUID();
 
         // given
-        given(memberRepository.findById(id))
+        given(memberRepository.findById(1L))
                 .willReturn(Optional.empty());
 
 
         // when & then
-        assertThatThrownBy(()->memberService.findById(id))
+        assertThatThrownBy(()->memberService.findById(1L))
                 .isInstanceOf(NotFoundEntityException.class);
-        verify(memberRepository).findById(id);
+        verify(memberRepository).findById(1L);
     }
 
 
@@ -93,7 +92,7 @@ class MemberServiceV1Test {
                 .willReturn(joinMember);
 
         // when
-        UUID saveId = memberService.save(memberDto);
+        Long saveId = memberService.save(memberDto);
 
         // then
         assertThat(saveId).isEqualTo(joinMember.getId());

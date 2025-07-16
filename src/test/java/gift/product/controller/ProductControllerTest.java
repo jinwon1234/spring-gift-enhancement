@@ -131,7 +131,7 @@ class ProductControllerTest {
         assertThat(response.getBody().getId()).isEqualTo(product.getId());
         assertThat(response.getBody().getName()).isEqualTo(product.getName());
         assertThat(response.getBody().getPrice()).isEqualTo(product.getPrice());
-        assertThat(response.getBody().getImageUrl()).isEqualTo(product.getImageUrl());
+        assertThat(response.getBody().getImageURL()).isEqualTo(product.getImageUrl());
     }
 
     @Test
@@ -139,7 +139,7 @@ class ProductControllerTest {
     void getProductFail() {
         assertThatThrownBy(()-> {
             restClient.get()
-            .uri("/{id}",UUID.randomUUID())
+            .uri("/{id}",1000L)
                     .retrieve()
                     .toEntity(ProductResponse.class);
         }).isInstanceOf(HttpClientErrorException.NotFound.class);
@@ -179,7 +179,7 @@ class ProductControllerTest {
 
         ProductUpdateRequest productDto = new ProductUpdateRequest("포카칩", 3000, "data:image/~base64,");
         assertThatThrownBy(()->restClient.put()
-                .uri("/{id}",UUID.randomUUID())
+                .uri("/{id}", 1000L)
                 .body(productDto)
                 .retrieve()
                 .toEntity(Void.class)
@@ -223,7 +223,7 @@ class ProductControllerTest {
     void deleteProductFail() {
         assertThatThrownBy(()-> {
             restClient.delete()
-                    .uri("/{id}", UUID.randomUUID())
+                    .uri("/{id}", 1000L)
                     .retrieve()
                     .toEntity(ProductResponse.class);
         }).isInstanceOf(HttpClientErrorException.NotFound.class);

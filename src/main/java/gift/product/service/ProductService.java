@@ -12,11 +12,11 @@ import java.util.UUID;
 
 public interface ProductService {
 
-    UUID save(ProductCreateRequest dto, String email);
+    Long save(ProductCreateRequest dto, String email);
     List<ProductResponse> findAllProducts();
-    ProductResponse findProduct(UUID id);
-    void deleteProduct(UUID id, AuthMember authMember);
-    void updateProduct(UUID id, ProductUpdateRequest dto, AuthMember authMember);
+    ProductResponse findProduct(Long id);
+    void deleteProduct(Long id, AuthMember authMember);
+    void updateProduct(Long id, ProductUpdateRequest dto, AuthMember authMember);
     List<ProductResponse> findByEmail(AuthMember authMember);
-    Product findById(UUID id);
+    Product findById(Long id);
 }

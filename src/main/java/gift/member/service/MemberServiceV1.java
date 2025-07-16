@@ -31,7 +31,7 @@ public class MemberServiceV1 implements MemberService{
     }
 
     @Override
-    public UUID save(MemberCreateDto memberCreateDto) {
+    public Long save(MemberCreateDto memberCreateDto) {
 
         if (!memberCreateDto.getConfirmPassword().equals(memberCreateDto.getPassword()))
             throw new BadRequestEntityException("비밀번호와 확인 비밀번호가 다릅니다.");
@@ -43,7 +43,8 @@ public class MemberServiceV1 implements MemberService{
 
         String encodedPassword = passwordEncoder.encode(memberCreateDto.getPassword());
 
-        Member saved = memberRepository.save(new Member(memberCreateDto.getEmail(), encodedPassword, Role.valueOf(memberCreateDto.getRole())));
+        Member saved = memberRepository.save(new Member(memberCreateDto.getEmail(), encodedPassword,
+                Role.valueOf(memberCreateDto.getRole())));
 
         return saved.getId();
     }
@@ -66,7 +67,7 @@ public class MemberServiceV1 implements MemberService{
     }
 
     @Override
-    public void updateMemberForAdmin(UUID id, MemberUpdateReqForAdmin memberUpdateReqForAdmin) {
+    public void updateMemberForAdmin(Long id, MemberUpdateReqForAdmin memberUpdateReqForAdmin) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 회원이 아닙니다."));
 
@@ -84,7 +85,7 @@ public class MemberServiceV1 implements MemberService{
     }
 
     @Override
-    public MemberResponse findById(UUID id) {
+    public MemberResponse findById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 회원이 아닙니다."));
         return new MemberResponse(member.getId(), member.getEmail(),member.getRole());
@@ -99,7 +100,7 @@ public class MemberServiceV1 implements MemberService{
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 회원이 아닙니다."));
 

@@ -30,7 +30,7 @@ public class WishProductController {
     public ResponseEntity<Void> addWishProduct(@MyAuthenticalPrincipal AuthMember authMember,
             @Valid @RequestBody WishProductCreateReq wishProductCreateReq) {
 
-        UUID savedId = wishProductService.save(wishProductCreateReq, authMember.getEmail());
+        Long savedId = wishProductService.save(wishProductCreateReq, authMember.getEmail());
 
 
         return ResponseEntity.status(HttpStatus.CREATED).
@@ -47,7 +47,7 @@ public class WishProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWishProduct(@MyAuthenticalPrincipal AuthMember authMember, @PathVariable UUID id) {
+    public ResponseEntity<Void> deleteWishProduct(@MyAuthenticalPrincipal AuthMember authMember, @PathVariable Long id) {
 
         wishProductService.deleteById(id, authMember.getEmail());
 
@@ -56,7 +56,7 @@ public class WishProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateWishProduct(@MyAuthenticalPrincipal AuthMember authMember, @PathVariable UUID id,
+    public ResponseEntity<Void> updateWishProduct(@MyAuthenticalPrincipal AuthMember authMember, @PathVariable Long id,
                                                   @Valid @RequestBody WishProductUpdateReq wishProductUpdateReq) {
 
         wishProductService.updateQuantity(id, wishProductUpdateReq, authMember.getEmail());

@@ -8,11 +8,11 @@ import java.util.UUID;
 public class WishProductCreateReq {
 
     @NotNull
-    private UUID productId;
+    private Long productId;
     @Min(value = 1, message = "1개 이상 주문이 가능합니다.")
     private int quantity;
 
-    public WishProductCreateReq(UUID productId, int quantity) {
+    public WishProductCreateReq(Long productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
@@ -20,7 +20,7 @@ public class WishProductCreateReq {
     protected WishProductCreateReq() {
     }
 
-    public UUID getProductId() {
+    public Long getProductId() {
         return productId;
     }
 

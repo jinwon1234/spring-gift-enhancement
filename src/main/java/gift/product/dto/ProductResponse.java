@@ -6,23 +6,23 @@ import java.util.UUID;
 
 public class ProductResponse {
 
-    private UUID id;
+    private Long id;
     private String name;
     private int price;
-    private String imageUrl;
-    private UUID memberId;
+    private String imageURL;
+    private Long memberId;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
-        this.imageUrl = product.getImageUrl();
+        this.imageURL = product.getImageUrl();
         this.memberId = product.getMember().getId();
     }
 
     protected ProductResponse() {}
   
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -34,11 +34,11 @@ public class ProductResponse {
         return price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public UUID getMemberId() {
+    public Long getMemberId() {
         return memberId;
     }
 }

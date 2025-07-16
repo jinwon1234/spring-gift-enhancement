@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class WishProductResponse {
 
-    private UUID id;
+    private Long id;
     private String productName;
     private int price;
     private int quantity;
@@ -22,7 +22,7 @@ public class WishProductResponse {
 
     protected WishProductResponse() {}
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

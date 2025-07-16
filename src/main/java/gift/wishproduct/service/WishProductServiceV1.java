@@ -33,7 +33,7 @@ public class WishProductServiceV1 implements WishProductService {
 
 
     @Override
-    public UUID save(WishProductCreateReq dto, String email) {
+    public Long save(WishProductCreateReq dto, String email) {
 
         Product product = productService.findById(dto.getProductId());
 
@@ -63,7 +63,7 @@ public class WishProductServiceV1 implements WishProductService {
     }
 
     @Override
-    public void deleteById(UUID id, String email) {
+    public void deleteById(Long id, String email) {
 
         WishProduct wishProduct = wishProductRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하지 않는 위시 상품입니다."));
@@ -77,7 +77,7 @@ public class WishProductServiceV1 implements WishProductService {
     }
 
     @Override
-    public void updateQuantity(UUID id, WishProductUpdateReq dto, String email) {
+    public void updateQuantity(Long id, WishProductUpdateReq dto, String email) {
 
         WishProduct wishProduct = wishProductRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하지 않는 위시 상품입니다."));

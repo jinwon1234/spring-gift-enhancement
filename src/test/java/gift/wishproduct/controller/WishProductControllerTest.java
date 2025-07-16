@@ -128,7 +128,7 @@ class WishProductControllerTest {
     void deleteWishProductFail() {
 
         assertThatThrownBy(()->restClient.delete()
-                .uri("/{id}", UUID.randomUUID())
+                .uri("/{id}", 1000L)
                 .retrieve()
                 .toEntity(Void.class)
         ).isInstanceOf(HttpClientErrorException.NotFound.class);

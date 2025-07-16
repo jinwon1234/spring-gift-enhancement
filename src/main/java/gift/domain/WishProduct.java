@@ -9,7 +9,8 @@ import java.util.UUID;
 public class WishProduct {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private int quantity;
@@ -23,15 +24,14 @@ public class WishProduct {
     private Product product;
 
 
-    public WishProduct(UUID id, int quantity, Member owner, Product product) {
-        this.id = id;
+    public WishProduct(int quantity, Member owner, Product product) {
         this.quantity = quantity;
         this.owner = owner;
         this.product = product;
     }
 
-    public WishProduct(int quantity, Member owner, Product product) {
-        this.id = UUID.randomUUID();
+    public WishProduct(Long id, int quantity, Member owner, Product product) {
+        this.id = id;
         this.quantity = quantity;
         this.owner = owner;
         this.product = product;
@@ -39,7 +39,7 @@ public class WishProduct {
 
     protected WishProduct() {}
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

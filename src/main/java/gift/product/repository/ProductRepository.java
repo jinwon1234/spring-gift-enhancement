@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public interface ProductRepository extends JpaRepository<Product, UUID> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByMemberId(UUID memberId);
+    List<Product> findByMemberId(Long memberId);
 }

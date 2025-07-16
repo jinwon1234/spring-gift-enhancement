@@ -9,7 +9,8 @@ import java.util.UUID;
 public class Product {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -18,6 +19,7 @@ public class Product {
     private int price;
 
     @Column(nullable = false)
+    @Lob
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,14 +32,13 @@ public class Product {
     protected Product() {}
 
     public Product(String name, int price, String imageUrl, Member member) {
-        this.id = UUID.randomUUID();
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
         this.member = member;
     }
 
-    public Product(UUID id, String name, int price, String imageUrl, Member member) {
+    public Product(Long id, String name, int price, String imageUrl, Member member) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -45,7 +46,7 @@ public class Product {
         this.member = member;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

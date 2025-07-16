@@ -11,19 +11,19 @@ import java.util.UUID;
 
 public interface MemberService {
 
-    UUID save(MemberCreateDto memberCreateDto);
+    Long save(MemberCreateDto memberCreateDto);
 
     void changePassword(String email, MemberUpdateRequest memberUpdateRequest);
 
-    void updateMemberForAdmin(UUID id, MemberUpdateReqForAdmin memberUpdateReqForAdmin);
+    void updateMemberForAdmin(Long id, MemberUpdateReqForAdmin memberUpdateReqForAdmin);
 
-    MemberResponse findById(UUID id);
+    MemberResponse findById(Long id);
 
     List<MemberResponse> findAll();
 
     void deleteByEmail(String email);
 
-    void deleteById(UUID id);
+    void deleteById(Long id);
 
     void validateToken(String email, String role);
 

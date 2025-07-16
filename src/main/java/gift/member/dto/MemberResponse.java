@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public class MemberResponse {
 
-    private UUID id;
+    private Long id;
     private String email;
     private Role role;
 
-    public MemberResponse(UUID id, String email, Role role) {
+    public MemberResponse(Long id, String email, Role role) {
         this.id = id;
         this.email = email;
         this.role = role;
@@ -19,7 +19,7 @@ public class MemberResponse {
 
     protected MemberResponse(){}
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
