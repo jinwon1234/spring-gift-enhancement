@@ -1,25 +1,13 @@
 package gift.product.repository;
 
 import gift.domain.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
-public interface ProductRepository {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    UUID save(Product product);
-
-    List<Product> findAll();
-
-    Optional<Product> findById(UUID id);
-
-    void deleteById(UUID id);
-
-    void update(Product product);
-
-    void deleteAll();
-
-    List<Product> findByMemberId(UUID memberId);
+    List<Product> findByMemberId(Long memberId);
 }

@@ -12,11 +12,13 @@ import gift.wishproduct.dto.WishProductResponse;
 import gift.wishproduct.dto.WishProductUpdateReq;
 import gift.wishproduct.repository.WishProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class WishProductServiceV1 implements WishProductService {
 
     private final WishProductRepository wishProductRepository;
@@ -31,7 +33,7 @@ public class WishProductServiceV1 implements WishProductService {
 
 
     @Override
-    public UUID save(WishProductCreateReq dto, String email) {
+    public Long save(WishProductCreateReq dto, String email) {
 
         Product product = productService.findById(dto.getProductId());
 
@@ -41,13 +43,12 @@ public class WishProductServiceV1 implements WishProductService {
                 .orElse(null);
 
         if (wishProduct == null) {
-            WishProduct saved = wishProductRepository.save(new WishProduct(dto.getQuantity(), owner.getId(), product.getId()));
+            WishProduct saved = wishProductRepository.save(new WishProduct(dto.getQuantity(), owner, product));
 
             return saved.getId();
         }
 
-        wishProductRepository.update(new WishProduct(wishProduct.getId(), wishProduct.getQuantity()+dto.getQuantity(), owner.getId(), product.getId()));
-
+        wishProduct.changeQuantity(dto.getQuantity() + wishProduct.getQuantity());
         return wishProduct.getId();
     }
 
@@ -56,38 +57,37 @@ public class WishProductServiceV1 implements WishProductService {
 
         Member owner = memberService.findByEmail(email);
 
-        return wishProductRepository.findWithProductByOwnerId(owner.getId());
+        return wishProductRepository.findWithProductByOwnerId(owner.getId())
+                .stream().map(WishProductResponse::new)
+                .toList();
     }
 
     @Override
-    public void deleteById(UUID id, String email) {
+    public void deleteById(Long id, String email) {
 
         WishProduct wishProduct = wishProductRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하지 않는 위시 상품입니다."));
 
         Member owner = memberService.findByEmail(email);
 
-        if (!owner.getId().equals(wishProduct.getOwnerId()))
+        if (!owner.getId().equals(wishProduct.getOwner().getId()))
             throw new BadRequestEntityException("자신의 위시 상품만 삭제할 수 있습니다");
 
         wishProductRepository.deleteById(wishProduct.getId());
     }
 
     @Override
-    public void updateQuantity(UUID id, WishProductUpdateReq dto, String email) {
+    public void updateQuantity(Long id, WishProductUpdateReq dto, String email) {
 
         WishProduct wishProduct = wishProductRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하지 않는 위시 상품입니다."));
 
         Member owner = memberService.findByEmail(email);
 
-        if (!owner.getId().equals(wishProduct.getOwnerId()))
+        if (!owner.getId().equals(wishProduct.getOwner().getId()))
             throw new BadRequestEntityException("자신의 위시 상품만 수정할 수 있습니다");
 
-        wishProductRepository.update(new WishProduct(
-                wishProduct.getId(), dto.getQuantity(),
-                owner.getId(), wishProduct.getId()
-        ));
+        wishProduct.changeQuantity(dto.getQuantity());
 
     }
 

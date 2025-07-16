@@ -1,26 +1,28 @@
 package gift.wishproduct.dto;
 
+import gift.domain.WishProduct;
+
 import java.util.UUID;
 
 public class WishProductResponse {
 
-    private UUID id;
+    private Long id;
     private String productName;
     private int price;
     private int quantity;
     private String imageUrl;
-
-    public WishProductResponse(UUID id, String productName, int price, int quantity, String imageUrl) {
-        this.id = id;
-        this.productName = productName;
-        this.price = price;
-        this.quantity = quantity;
-        this.imageUrl = imageUrl;
+  
+    public WishProductResponse(WishProduct wishProduct) {
+        this.id = wishProduct.getId();
+        this.productName = wishProduct.getProduct().getName();
+        this.price = wishProduct.getProduct().getPrice();
+        this.quantity = wishProduct.getQuantity();
+        this.imageUrl = wishProduct.getProduct().getImageUrl();
     }
 
     protected WishProductResponse() {}
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

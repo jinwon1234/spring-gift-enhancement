@@ -28,7 +28,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Void> addProduct(@Valid @RequestBody ProductCreateRequest dto, @MyAuthenticalPrincipal AuthMember authMember) {
 
-        UUID savedId = productService.save(dto, authMember.getEmail());
+        Long savedId = productService.save(dto, authMember.getEmail());
 
         return ResponseEntity.status(HttpStatus.CREATED).location(
                 LocationGenerator.generate(savedId)
@@ -52,7 +52,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable UUID id) {
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable Long id) {
 
         ProductResponse response = productService.findProduct(id);
 
@@ -60,14 +60,14 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id, @MyAuthenticalPrincipal AuthMember authMember) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, @MyAuthenticalPrincipal AuthMember authMember) {
         productService.deleteProduct(id, authMember);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductUpdateRequest dto,
+    public ResponseEntity<Void> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductUpdateRequest dto,
                                               @MyAuthenticalPrincipal AuthMember authMember) {
 
         productService.updateProduct(id, dto, authMember);

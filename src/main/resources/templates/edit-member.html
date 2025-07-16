@@ -46,9 +46,17 @@
                         window.location.href = '/admin/members';
                     },
                     error: (jqXHR) => {
-                        let msg = "회원 정보 수정 실패";
-                        if (jqXHR.responseJSON?.message) msg = jqXHR.responseJSON.message;
-                        alert(msg);
+                        let message = "회원 정보 수정 실패";
+                        const response = jqXHR.responseJSON;
+                        if (response) {
+                            if (response.fieldErrors) {
+                                message = Object.values(response.fieldErrors).join('\n');
+                            } else if (response.globalErrors) {
+                                message = response.globalErrors.map(err => err.message).join('\n');
+                            }
+                        }
+
+                        alert(message);
                     }
                 });
             });

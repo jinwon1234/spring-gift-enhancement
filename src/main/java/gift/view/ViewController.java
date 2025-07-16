@@ -32,7 +32,7 @@ public class ViewController {
     }
 
     @GetMapping("/my/products/{id}")
-    public String editProduct(@PathVariable UUID id, Model model){
+    public String editProduct(@PathVariable Long id, Model model){
 
         model.addAttribute("productId", id);
 
@@ -53,7 +53,7 @@ public class ViewController {
 
     @OnlyForAdmin
     @GetMapping("/admin/products/{id}")
-    public String editProductForAdmin(@PathVariable UUID id, Model model){
+    public String editProductForAdmin(@PathVariable Long id, Model model){
 
         model.addAttribute("productId", id);
 
@@ -68,7 +68,7 @@ public class ViewController {
 
     @OnlyForAdmin
     @GetMapping("/admin/members/{id}")
-    public String editMember(@PathVariable UUID id, Model model){
+    public String editMember(@PathVariable Long id, Model model){
         model.addAttribute("memberId", id);
 
         return  "edit-member";

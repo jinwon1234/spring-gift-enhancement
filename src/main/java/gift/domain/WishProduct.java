@@ -1,32 +1,45 @@
 package gift.domain;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "wish_product")
 public class WishProduct {
 
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private int quantity;
-    private UUID ownerId;
-    private UUID productId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Member owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
 
-    public WishProduct(UUID id, int quantity, UUID ownerId, UUID productId) {
-        this.id = id;
+    public WishProduct(int quantity, Member owner, Product product) {
         this.quantity = quantity;
-        this.ownerId = ownerId;
-        this.productId = productId;
+        this.owner = owner;
+        this.product = product;
     }
 
-    public WishProduct(int quantity, UUID ownerId, UUID productId) {
-        this.id = UUID.randomUUID();
+    public WishProduct(Long id, int quantity, Member owner, Product product) {
+        this.id = id;
         this.quantity = quantity;
-        this.ownerId = ownerId;
-        this.productId = productId;
+        this.owner = owner;
+        this.product = product;
     }
 
     protected WishProduct() {}
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -34,12 +47,15 @@ public class WishProduct {
         return quantity;
     }
 
-    public UUID getOwnerId() {
-        return ownerId;
+    public Member getOwner() {
+        return owner;
     }
 
-    public UUID getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
+    public void changeQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

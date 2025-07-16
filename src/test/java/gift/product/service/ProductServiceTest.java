@@ -42,7 +42,7 @@ class ProductServiceTest {
         assertThat(product.getId()).isEqualTo(findProduct.getId());
         assertThat(product.getName()).isEqualTo(findProduct.getName());
         assertThat(product.getPrice()).isEqualTo(findProduct.getPrice());
-        assertThat(product.getImageURL()).isEqualTo(findProduct.getImageURL());
+        assertThat(product.getImageUrl()).isEqualTo(findProduct.getImageURL());
     }
 
     @Test
@@ -63,7 +63,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 조회 실패 - 존재하지 않는 상품")
     void getProductSuccess() {
-        assertThatThrownBy(()-> productService.findProduct(UUID.randomUUID()))
+        assertThatThrownBy(()-> productService.findProduct(1L))
                 .isInstanceOf(NotFoundEntityException.class);
     }
 
@@ -95,7 +95,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 삭제 실패 - 존재하지 않는 상품")
     void deleteProductFail() {
-        assertThatThrownBy(()-> productService.findProduct(UUID.randomUUID() ))
+        assertThatThrownBy(()-> productService.findProduct(1L))
                 .isInstanceOf(NotFoundEntityException.class);
     }
 
@@ -155,7 +155,7 @@ class ProductServiceTest {
 
         ProductUpdateRequest updateDto = new ProductUpdateRequest("스윙칩", 3500, "data:image/~base64,");
 
-        assertThatThrownBy(()->productService.updateProduct(UUID.randomUUID(), updateDto,  new AuthMember(member.getEmail(), member.getRole())))
+        assertThatThrownBy(()->productService.updateProduct(1L, updateDto,  new AuthMember(member.getEmail(), member.getRole())))
                 .isInstanceOf(NotFoundEntityException.class);
     }
 
@@ -164,7 +164,7 @@ class ProductServiceTest {
     }
 
     private Product addProductCase(Member member) {
-        UUID uuid = productService.save(new ProductCreateRequest("스윙칩", 3000, "data:image/~base64,"), member.getEmail());
-        return new Product(uuid, "스윙칩", 3000, "data:image/~base64,",member.getId());
+        Long id = productService.save(new ProductCreateRequest("스윙칩", 3000, "data:image/~base64,"), member.getEmail());
+        return new Product(id, "스윙칩", 3000, "data:image/~base64,",member);
     }
 }

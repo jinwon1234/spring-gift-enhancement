@@ -11,7 +11,7 @@ public final class LocationGenerator {
         throw new AssertionError("utility class");
     }
 
-    public static URI generate(UUID id) {
+    public static URI generate(Long id) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

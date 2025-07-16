@@ -30,9 +30,10 @@ public class ProductServiceV1 implements ProductService{
     }
 
 
-    public UUID save(ProductCreateRequest dto, String email) {
+    public Long save(ProductCreateRequest dto, String email) {
         Member findMember = memberService.findByEmail(email);
-        return productRepository.save(new Product(dto.getName(), dto.getPrice(), dto.getImageURL(), findMember.getId()));
+        Product save = productRepository.save(new Product(dto.getName(), dto.getPrice(), dto.getImageURL(), findMember));
+        return save.getId();
     }
 
     public List<ProductResponse> findAllProducts() {
@@ -42,35 +43,36 @@ public class ProductServiceV1 implements ProductService{
     }
 
 
-    public ProductResponse findProduct(UUID id) {
+    public ProductResponse findProduct(Long id) {
         Product findProduct = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
         return new ProductResponse(findProduct);
     }
 
-    public void deleteProduct(UUID id, AuthMember authMember) {
+    public void deleteProduct(Long id, AuthMember authMember) {
 
         Product findProduct = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
 
         Member findMember = memberService.findByEmail(authMember.getEmail());
 
-        checkIsAdminOrOwner(authMember,findMember, findProduct.getMemberId());
+        checkIsAdminOrOwner(authMember,findMember, findProduct.getMember().getId());
 
         productRepository.deleteById(id);
     }
 
-    public void updateProduct(UUID id, ProductUpdateRequest dto, AuthMember authMember) {
+    public void updateProduct(Long id, ProductUpdateRequest dto, AuthMember authMember) {
 
 
         Product findProduct = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
 
         Member findMember = memberService.findByEmail(authMember.getEmail());
+        checkIsAdminOrOwner(authMember, findMember, findProduct.getMember().getId());
 
-        checkIsAdminOrOwner(authMember, findMember, findProduct.getMemberId());
-
-        productRepository.update(new Product(id, dto.getName(), dto.getPrice(), dto.getImageURL(), findMember.getId()));
+        findProduct.changeName(dto.getName());
+        findProduct.changePrice(dto.getPrice());
+        findProduct.changeImageUrl(dto.getImageURL());
     }
 
     @Override
@@ -81,16 +83,16 @@ public class ProductServiceV1 implements ProductService{
                 .stream().map(ProductResponse::new).toList();
     }
 
-    public Product findById(UUID productId) {
+    public Product findById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(()->new NotFoundEntityException("존재하는 상품이 아닙니다"));
     }
 
-    private void checkIsAdminOrOwner(AuthMember authMember, Member member, UUID productMemberId) {
+    private void checkIsAdminOrOwner(AuthMember authMember, Member member,  Long ownerId) {
 
         if (authMember.getRole() == Role.ADMIN) return;
 
-        if (!member.getId().equals(productMemberId))
+        if (!member.getId().equals(ownerId))
             throw new BadRequestEntityException("자신의 상품이 아닙니다.");
     }
 }

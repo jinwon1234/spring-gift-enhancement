@@ -44,13 +44,13 @@ class ProductControllerTest {
     @Autowired
     private JWTUtil jwtUtil;
 
-    private final UUID memberId = UUID.randomUUID();
+    private Member saved;
 
     RestClient restClient;
 
     @BeforeEach
     void setUp() {
-        Member saved = memberRepository.save(new Member(memberId,"ljw2109@naver.com", "Qwer1234!!", Role.REGULAR));
+        saved = memberRepository.save(new Member("ljw2109@naver.com", "Qwer1234!!", Role.REGULAR));
 
         String token = jwtUtil
                 .createJWT(saved.getEmail(), saved.getRole().toString(), 1000 * 60L);
@@ -131,7 +131,7 @@ class ProductControllerTest {
         assertThat(response.getBody().getId()).isEqualTo(product.getId());
         assertThat(response.getBody().getName()).isEqualTo(product.getName());
         assertThat(response.getBody().getPrice()).isEqualTo(product.getPrice());
-        assertThat(response.getBody().getImageURL()).isEqualTo(product.getImageURL());
+        assertThat(response.getBody().getImageURL()).isEqualTo(product.getImageUrl());
     }
 
     @Test
@@ -139,7 +139,7 @@ class ProductControllerTest {
     void getProductFail() {
         assertThatThrownBy(()-> {
             restClient.get()
-            .uri("/{id}",UUID.randomUUID())
+            .uri("/{id}",1000L)
                     .retrieve()
                     .toEntity(ProductResponse.class);
         }).isInstanceOf(HttpClientErrorException.NotFound.class);
@@ -179,7 +179,7 @@ class ProductControllerTest {
 
         ProductUpdateRequest productDto = new ProductUpdateRequest("포카칩", 3000, "data:image/~base64,");
         assertThatThrownBy(()->restClient.put()
-                .uri("/{id}",UUID.randomUUID())
+                .uri("/{id}", 1000L)
                 .body(productDto)
                 .retrieve()
                 .toEntity(Void.class)
@@ -223,16 +223,16 @@ class ProductControllerTest {
     void deleteProductFail() {
         assertThatThrownBy(()-> {
             restClient.delete()
-                    .uri("/{id}", UUID.randomUUID())
+                    .uri("/{id}", 1000L)
                     .retrieve()
                     .toEntity(ProductResponse.class);
         }).isInstanceOf(HttpClientErrorException.NotFound.class);
     }
 
     private Product addProductCase() {
-        Product product = new Product("스윙칩", 3000, "data:image/~base64,", memberId);
-        UUID uuid = productRepository.save(product);
-        return product;
+        Product product = new Product("스윙칩", 3000, "data:image/~base64,", saved);
+        Product save = productRepository.save(product);
+        return save;
     }
 
 }
