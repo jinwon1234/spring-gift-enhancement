@@ -1,6 +1,10 @@
 package gift.product.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.PageResponse;
 import gift.domain.Member;
 import gift.domain.Product;
 import gift.domain.Role;
@@ -23,9 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
-import java.util.List;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,6 +44,9 @@ class ProductControllerTest {
 
     @Autowired
     private JWTUtil jwtUtil;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Member saved;
 
@@ -203,18 +207,23 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("자신의 등록한 모든 상품 조회")
-    void getAllProducts() {
+    void getAllProducts() throws JsonProcessingException {
         for (int i=0; i<10; i++) {
             addProductCase();
         }
 
-        ResponseEntity<List> repsonse = restClient.get()
+        ResponseEntity<String> response = restClient.get()
                 .uri("/mine")
                 .retrieve()
-                .toEntity(List.class);
+                .toEntity(String.class);
 
-        assertThat(repsonse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(repsonse.getBody().size()).isEqualTo(10);
+        PageResponse<ProductResponse> page = objectMapper.readValue(
+                response.getBody(),
+                new TypeReference<PageResponse<ProductResponse>>() {}
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(page.getPage().getTotalElements()).isEqualTo(10);
     }
 
 

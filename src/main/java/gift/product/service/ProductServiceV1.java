@@ -11,6 +11,8 @@ import gift.product.dto.ProductCreateRequest;
 import gift.product.dto.ProductResponse;
 import gift.product.dto.ProductUpdateRequest;
 import gift.product.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,12 @@ public class ProductServiceV1 implements ProductService{
         return productRepository.findAll()
                 .stream().map(ProductResponse::new)
                 .toList();
+    }
+
+    @Override
+    public Page<ProductResponse> findAllProductsWithPage(Pageable pageable) {
+        return productRepository.findAllWithPage(pageable)
+                .map(ProductResponse::new);
     }
 
 
@@ -81,6 +89,14 @@ public class ProductServiceV1 implements ProductService{
 
        return productRepository.findByMemberId(findMember.getId())
                 .stream().map(ProductResponse::new).toList();
+    }
+
+    @Override
+    public Page<ProductResponse> findByEmailWithPage(AuthMember authMember, Pageable pageable) {
+        Member findMember = memberService.findByEmail(authMember.getEmail());
+
+        return productRepository.findByMemberIdWithPage(findMember.getId(), pageable)
+                .map(ProductResponse::new);
     }
 
     public Product findById(Long productId) {

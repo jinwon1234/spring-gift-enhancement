@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -81,6 +83,26 @@ class ProductRepositoryTest {
         // then
         assertThat(findProduct).isNotPresent();
 
+    }
+
+    @Test
+    @DisplayName("나의 상품 페이징 조회")
+    void findByMemberIdWithPage() {
+
+        // given
+        Member member = new Member("ljw2109@naver.com", "Qwer1234!!", Role.REGULAR);
+        memberRepository.save(member);
+
+        for (int i=0; i<11; i++) {
+            Product product = new Product("스윙칩"+i, 3000, "image", member);
+            productRepository.save(product);
+        }
+
+        // when
+        Page<Product> result = productRepository.findByMemberIdWithPage(member.getId(), PageRequest.of(0, 5));
+
+        // then
+        assertThat(result.getSize()).isEqualTo(5);
     }
 
 }

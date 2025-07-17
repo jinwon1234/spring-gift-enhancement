@@ -14,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -46,8 +48,8 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("모든 상품 조회")
-    void getAllProductsSuccess() {
+    @DisplayName("자신의 모든 상품 조회")
+    void getAllMyProductsSuccess() {
 
         Member member = addMemberCase();
 
@@ -55,9 +57,25 @@ class ProductServiceTest {
             addProductCase(member);
         }
 
-        List<ProductResponse> allProducts = productService.findAllProducts();
+        List<ProductResponse> allProducts = productService.findByEmail(new AuthMember(member.getEmail(), member.getRole()));
 
         assertThat(allProducts.size()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("자신의 상품 페이징 조회")
+    void getAllMyProductsWithPageSuccess() {
+
+        Member member = addMemberCase();
+
+        for (int i=0; i<10; i++) {
+            addProductCase(member);
+        }
+
+        Page<ProductResponse> result = productService.findByEmailWithPage(new AuthMember(member.getEmail(), member.getRole()),
+                PageRequest.of(0,5));
+
+        assertThat(result.getSize()).isEqualTo(5);
     }
 
     @Test
