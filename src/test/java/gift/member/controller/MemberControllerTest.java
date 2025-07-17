@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -219,9 +221,9 @@ class MemberControllerTest {
 
         String jwt = createJWT(member);
 
-        ResponseEntity<List> response = restClient.get()
+        ResponseEntity<Object> response = restClient.get()
                 .cookie("Authorization", jwt)
-                .retrieve().toEntity(List.class);
+                .retrieve().toEntity(Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }

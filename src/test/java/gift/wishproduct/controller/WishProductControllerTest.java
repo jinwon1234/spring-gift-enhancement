@@ -1,14 +1,20 @@
 package gift.wishproduct.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.PageResponse;
 import gift.domain.Member;
 import gift.domain.Product;
 import gift.domain.Role;
 import gift.domain.WishProduct;
 import gift.jwt.JWTUtil;
 import gift.member.repository.MemberRepository;
+import gift.product.dto.ProductResponse;
 import gift.product.repository.ProductRepository;
 import gift.wishproduct.dto.WishProductCreateReq;
+import gift.wishproduct.dto.WishProductResponse;
 import gift.wishproduct.dto.WishProductUpdateReq;
 import gift.wishproduct.repository.WishProductRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -46,6 +52,9 @@ class WishProductControllerTest {
 
     @Autowired
     private JWTUtil jwtUtil;
+  
+    @Autowired
+    private ObjectMapper objectMapper;
   
     private Member member;
     private Product product;
@@ -95,18 +104,26 @@ class WishProductControllerTest {
 
     @Test
     @DisplayName("위시 리스트 조회 성공")
-    void getMyWishList() {
+    void getMyWishList() throws JsonProcessingException {
 
         // given
         addWishProduct();
 
         // when
-        ResponseEntity<List> response = restClient.get()
+        ResponseEntity<String> response = restClient.get()
                 .retrieve()
-                .toEntity(List.class);
+                .toEntity(String.class);
+
+        PageResponse<WishProductResponse> page = objectMapper.readValue(
+                response.getBody(),
+                new TypeReference<PageResponse<WishProductResponse>>() {}
+        );
+
+        List<WishProductResponse> content = page.getContent();
+        System.out.println(content);
 
         // then
-        assertThat(response.getBody().size()).isEqualTo(1);
+        assertThat(page.getPage().getTotalElements()).isEqualTo(1);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 

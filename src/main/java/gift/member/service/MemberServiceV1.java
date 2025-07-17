@@ -11,6 +11,8 @@ import gift.member.dto.MemberResponse;
 import gift.member.dto.MemberUpdateReqForAdmin;
 import gift.member.dto.MemberUpdateRequest;
 import gift.member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,6 +102,11 @@ public class MemberServiceV1 implements MemberService{
     }
 
     @Override
+    public Page<MemberResponse> findAllByPage(Pageable pageable) {
+        return memberRepository.findAllWithPage(pageable)
+                .map(m-> new MemberResponse(m.getId(), m.getEmail(),m.getRole()));
+    }
+
     public void deleteById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 회원이 아닙니다."));

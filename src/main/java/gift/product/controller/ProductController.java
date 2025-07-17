@@ -8,6 +8,10 @@ import gift.product.dto.ProductUpdateRequest;
 import gift.product.service.ProductService;
 import gift.util.LocationGenerator;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,17 +40,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(@PageableDefault(page = 0, size = 10,sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<ProductResponse> response = productService.findAllProducts();
+        Page<ProductResponse> response = productService.findAllProductsWithPage(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<ProductResponse>> getMyProducts(@MyAuthenticalPrincipal AuthMember authMember) {
+    public ResponseEntity<Page<ProductResponse>> getMyProducts(@MyAuthenticalPrincipal AuthMember authMember,
+                                                               @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<ProductResponse> response = productService.findByEmail(authMember);
+        Page<ProductResponse> response = productService.findByEmailWithPage(authMember, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
