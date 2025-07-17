@@ -20,6 +20,6 @@ public interface WishProductRepository extends JpaRepository<WishProduct, Long> 
     List<WishProduct> findWithProductByOwnerId(Long ownerId);
 
     @Query(value = "select w from WishProduct w join fetch w.product where w.owner.id = :ownerId",
-            countQuery = "select count(w.id) from WishProduct w")
+            countQuery = "select count(w.id) from WishProduct w where w.owner.id = :ownerId")
     Page<WishProduct> findWithProductByOwnerIdWithPage(Long ownerId, Pageable pageable);
 }
