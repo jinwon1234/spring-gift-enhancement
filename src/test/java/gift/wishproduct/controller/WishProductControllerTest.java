@@ -52,7 +52,7 @@ class WishProductControllerTest {
 
     @Autowired
     private JWTUtil jwtUtil;
-
+  
     @Autowired
     private ObjectMapper objectMapper;
   

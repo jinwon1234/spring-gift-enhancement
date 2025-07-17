@@ -107,7 +107,6 @@ public class MemberServiceV1 implements MemberService{
                 .map(m-> new MemberResponse(m.getId(), m.getEmail(),m.getRole()));
     }
 
-    @Override
     public void deleteById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 회원이 아닙니다."));

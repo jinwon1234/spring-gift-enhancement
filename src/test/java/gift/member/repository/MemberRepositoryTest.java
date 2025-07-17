@@ -94,5 +94,4 @@ class MemberRepositoryTest {
         // then
         assertThat(result.getSize()).isEqualTo(5);
     }
-
 }
