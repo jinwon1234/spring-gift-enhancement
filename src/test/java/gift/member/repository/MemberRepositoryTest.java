@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -74,6 +76,23 @@ class MemberRepositoryTest {
 
         // then
         assertThat(findMember).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("회원 페이징 쿼리")
+    void findAllWithPage() {
+
+        // given
+        for (int i=0; i<11; i++) {
+            Member member = new Member(i + "user@naver.com", "Qwer1234!!", Role.REGULAR);
+            memberRepository.save(member);
+        }
+
+        // when
+        Page<Member> result = memberRepository.findAllWithPage(PageRequest.of(0, 5));
+
+        // then
+        assertThat(result.getSize()).isEqualTo(5);
     }
 
 }

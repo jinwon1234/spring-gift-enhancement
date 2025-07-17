@@ -5,6 +5,8 @@ import gift.member.dto.MemberCreateDto;
 import gift.member.dto.MemberResponse;
 import gift.member.dto.MemberUpdateReqForAdmin;
 import gift.member.dto.MemberUpdateRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,8 @@ public interface MemberService {
     MemberResponse findById(Long id);
 
     List<MemberResponse> findAll();
+
+    Page<MemberResponse> findAllByPage(Pageable pageable);
 
     void deleteByEmail(String email);
 

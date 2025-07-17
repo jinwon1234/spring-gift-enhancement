@@ -6,6 +6,10 @@ import gift.member.dto.*;
 import gift.member.service.MemberService;
 import gift.util.LocationGenerator;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,9 +54,9 @@ public class MemberController {
 
     @OnlyForAdmin
     @GetMapping()
-    public ResponseEntity<List<MemberResponse>> getMembers() {
+    public ResponseEntity<Page<MemberResponse>> getMembers(@PageableDefault(page = 0, size=10, sort="id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<MemberResponse> response = memberService.findAll();
+        Page<MemberResponse> response = memberService.findAllByPage(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
