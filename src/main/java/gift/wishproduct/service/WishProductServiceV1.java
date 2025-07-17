@@ -11,6 +11,10 @@ import gift.wishproduct.dto.WishProductCreateReq;
 import gift.wishproduct.dto.WishProductResponse;
 import gift.wishproduct.dto.WishProductUpdateReq;
 import gift.wishproduct.repository.WishProductRepository;
+import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +29,7 @@ public class WishProductServiceV1 implements WishProductService {
     private final ProductService productService;
     private final MemberService memberService;
 
-    public WishProductServiceV1(WishProductRepository wishProductRepository, ProductService productService, MemberService memberService) {
+    public WishProductServiceV1(WishProductRepository wishProductRepository, ProductService productService, MemberService memberService, EntityManager em) {
         this.wishProductRepository = wishProductRepository;
         this.productService = productService;
         this.memberService = memberService;
@@ -60,6 +64,14 @@ public class WishProductServiceV1 implements WishProductService {
         return wishProductRepository.findWithProductByOwnerId(owner.getId())
                 .stream().map(WishProductResponse::new)
                 .toList();
+    }
+
+    @Override
+    public Page<WishProductResponse> findByEmailWithPage(String email, Pageable pageable) {
+        Member owner = memberService.findByEmail(email);
+
+        return wishProductRepository.findWithProductByOwnerIdWithPage(owner.getId(), pageable)
+                .map(WishProductResponse::new);
     }
 
     @Override

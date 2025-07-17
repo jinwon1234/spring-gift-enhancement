@@ -3,24 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>나의 위시리스트</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        $.ajaxSetup({
-            xhrFields: {
-                withCredentials: true
-            }
-        });
+        function getQueryParam(name, defaultValue) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name) || defaultValue;
+        }
 
         $(document).ready(function () {
+            let currentPage = parseInt(getQueryParam('page', 0));
+            const size = parseInt(getQueryParam('size', 10));
+            const sort = getQueryParam('sort', 'id,asc');
 
-            function fetchWishProducts() {
+            $('#sortKey').val(sort.split(',')[0]);
+            $('#sortDir').val(sort.split(',')[1]);
+
+            $('#sortKey, #sortDir').on('change', function () {
+                const newSortKey = $('#sortKey').val();
+                const newSortDir = $('#sortDir').val();
+
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('page', 0);
+                newUrl.searchParams.set('size', size);
+                newUrl.searchParams.set('sort', `${newSortKey},${newSortDir}`);
+
+                window.location.href = newUrl.toString();
+            });
+
+            function fetchWishProducts(page = 0) {
                 $.ajax({
-                    url: '/api/wish-products',
+                    url: `/api/wish-products?page=${page}&size=${size}&sort=${sort}`,
                     method: 'GET',
-                    success: function (products) {
+                    success: function (data) {
+                        const products = data.content;
+                        const totalPages = data.page.totalPages;
+                        currentPage = data.page.number;
+
                         let html = `
                             <table class="table table-striped table-hover mt-4">
                                 <thead class="table-dark">
@@ -51,6 +71,8 @@
                         }
                         html += `</tbody></table>`;
                         $('#result').html(html);
+
+                        renderPagination(totalPages);
                     },
                     error: function () {
                         $('#result').html('<div class="alert alert-danger">위시리스트를 불러오는 데 실패했습니다.</div>');
@@ -58,11 +80,28 @@
                 });
             }
 
+            function renderPagination(totalPages) {
+                let paginationHtml = `<nav><ul class="pagination">`;
+
+                for (let i = 0; i < totalPages; i++) {
+                    const active = i === currentPage ? 'active' : '';
+                    paginationHtml += `
+                        <li class="page-item ${active}">
+                            <a class="page-link pageBtn" href="?page=${i}&size=${size}&sort=${sort}">${i + 1}</a>
+                        </li>`;
+                }
+
+                paginationHtml += `</ul></nav>`;
+                $('#pagination').html(paginationHtml);
+            }
+
+            $('#pagination').on('click', '.pageBtn', function (e) {
+                // 새로고침은 허용하여 주소창 반영
+            });
 
             $('#result').on('click', '.updateBtn', function () {
                 const wishId = $(this).data('id');
                 const currentQuantity = $(this).data('current');
-
                 const input = prompt("새 수량을 입력하세요:", currentQuantity);
                 const quantity = parseInt(input);
 
@@ -73,7 +112,7 @@
                     data: JSON.stringify({ quantity }),
                     success: function () {
                         alert('수량이 수정되었습니다.');
-                        fetchWishProducts();
+                        fetchWishProducts(currentPage);
                     },
                     error: (jqXHR) => {
                         let message = "위시 상품 수정 실패";
@@ -98,7 +137,7 @@
                                 message = errors.join('\n');
                             }
                         }
-                        alert(message)
+                        alert(message);
                     }
                 });
             });
@@ -110,7 +149,7 @@
                         url: `/api/wish-products/${wishId}`,
                         method: 'DELETE',
                         success: function () {
-                            fetchWishProducts();
+                            fetchWishProducts(currentPage);
                         },
                         error: (jqXHR) => {
                             let msg = "위시 상품 삭제 실패";
@@ -121,19 +160,37 @@
                 }
             });
 
-            fetchWishProducts();
+            fetchWishProducts(currentPage);
         });
     </script>
 </head>
 
 <body class="bg-light">
-<!-- 공통 헤더 포함 -->
 <div th:replace="~{fragments/header.html}"></div>
 <div class="container mt-5">
     <h1 class="text-center text-primary fw-bold mb-4">나의 위시리스트</h1>
 
     <hr>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="sortKey" class="form-label">정렬 기준</label>
+            <select id="sortKey" class="form-select">
+                <option value="id">ID</option>
+                <option value="quantity">수량</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="sortDir" class="form-label">정렬 방향</label>
+            <select id="sortDir" class="form-select">
+                <option value="asc">오름차순</option>
+                <option value="desc">내림차순</option>
+            </select>
+        </div>
+    </div>
+
     <div id="result"></div>
+    <div class="d-flex justify-content-center mt-3" id="pagination"></div>
 </div>
 </body>
 </html>
