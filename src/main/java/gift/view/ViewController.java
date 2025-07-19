@@ -21,6 +21,16 @@ public class ViewController {
         return  "all-product";
     }
 
+    @GetMapping("/products/new")
+    public String addProduct() {
+        return "add-product";
+    }
+
+    @GetMapping("/admin/products/new")
+    public String addAdminProduct() {
+        return "add-admin-product";
+    }
+
     @GetMapping("/wishlist")
     public String wishlist() {
         return "wishlist";
