@@ -30,7 +30,9 @@ public class OptionServiceV1 implements OptionService{
     }
 
     @Override
-    public void save(List<OptionCreateRequest> options, Product product) {
+    public void save(List<OptionCreateRequest> options, Product product, AuthMember authMember) {
+
+        memberService.isOwnerOrAdmin(authMember.getEmail(), product.getMember().getId());
 
         if (options.isEmpty()) return;
 
@@ -54,9 +56,17 @@ public class OptionServiceV1 implements OptionService{
     }
 
     @Override
-    public OptionResponse findById(AuthMember authMember, Long id) {
+    public Option findByIdWithProduct(Long id) {
 
-        Option option = validateIsOwner(authMember, id);
+        return optionRepository.findByIdWithProduct(id)
+                .orElseThrow(() -> new NotFoundEntityException("존재하는 옵션이 아닙니다."));
+    }
+
+    @Override
+    public OptionResponse findById(Long id) {
+
+        Option option = optionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("존재하는 옵션이 아닙니다."));
 
         return new OptionResponse(option.getId(), option.getName(), option.getQuantity());
     }

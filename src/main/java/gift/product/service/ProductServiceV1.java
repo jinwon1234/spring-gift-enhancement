@@ -40,7 +40,7 @@ public class ProductServiceV1 implements ProductService{
         Member findMember = memberService.findByEmail(email);
         Product save = productRepository.save(new Product(dto.getName(), dto.getPrice(), dto.getImageURL(), findMember));
 
-        optionService.save(dto.getOptions(), save);
+        optionService.save(dto.getOptions(), save, new AuthMember(findMember.getEmail(), findMember.getRole()));
 
         return save.getId();
     }

@@ -11,11 +11,13 @@ import java.util.List;
 
 public interface OptionService {
 
-    void save(List<OptionCreateRequest> options, Product product);
+    void save(List<OptionCreateRequest> options, Product product, AuthMember authMember);
 
     void deleteById(AuthMember authMember, Long id);
 
-    OptionResponse findById(AuthMember authMember, Long id);
+    Option findByIdWithProduct(Long id);
+
+    OptionResponse findById(Long id);
 
     List<OptionResponse> findByProduct(Product product);
 

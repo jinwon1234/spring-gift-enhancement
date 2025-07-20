@@ -25,8 +25,8 @@ public class OptionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OptionResponse> getOptionById(@MyAuthenticalPrincipal AuthMember authMember, @PathVariable Long id) {
-        OptionResponse response = optionService.findById(authMember, id);
+    public ResponseEntity<OptionResponse> getOptionById(@PathVariable Long id) {
+        OptionResponse response = optionService.findById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -56,7 +56,7 @@ public class OptionController {
 
         Product product = productService.findById(optionCreateListRequest.productId());
 
-        optionService.save(optionCreateListRequest.options(), product);
+        optionService.save(optionCreateListRequest.options(), product, authMember);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).build();

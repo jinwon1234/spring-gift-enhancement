@@ -115,4 +115,10 @@ public class ViewController {
         return "admin-product-option";
     }
 
+    @GetMapping("/products/{productId}/select-option")
+    public String selectOption(@PathVariable Long productId, Model model){
+        model.addAttribute("productId", productId);
+        return "select-option";
+    }
+
 }
