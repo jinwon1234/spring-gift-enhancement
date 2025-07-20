@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.PageResponse;
 import gift.domain.Member;
+import gift.domain.Option;
 import gift.domain.Product;
 import gift.domain.Role;
 import gift.global.error.ErrorResponse;
@@ -190,7 +191,6 @@ class ProductControllerTest {
     @DisplayName("상품 업데이트 성공")
     void updateProductSuccess() {
         Product product = addProductCase();
-
         ProductUpdateRequest productDto = new ProductUpdateRequest("포카칩", 3000, "data:image/~base64,");
         ResponseEntity<Void> response = restClient.put()
                 .uri("/{id}",product.getId())
@@ -219,7 +219,6 @@ class ProductControllerTest {
     void updateProductFailCase2() {
 
         Product product = addProductCase();
-
         ProductUpdateRequest productDto = new ProductUpdateRequest("카카오", -1, "data:image/~base64,");
         assertThatThrownBy(()->restClient.put()
                 .uri("/{id}", product.getId())
@@ -253,6 +252,7 @@ class ProductControllerTest {
 
 
     @Test
+    @DisplayName("상품 삭제 실패 - 존재하지 않는 상품")
     void deleteProductFail() {
         assertThatThrownBy(()-> {
             restClient.delete()
@@ -262,10 +262,26 @@ class ProductControllerTest {
         }).isInstanceOf(HttpClientErrorException.NotFound.class);
     }
 
+
+    @Test
+    @DisplayName("특정 상품의 옵션 조회")
+    void getOptionSuccess() {
+        Product product = addProductCase();
+
+        ResponseEntity<List> response = restClient.get()
+                .uri("/{id}/options",product.getId())
+                .retrieve()
+                .toEntity(List.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(1);
+    }
+
+
     private Product addProductCase() {
         Product product = new Product("스윙칩", 3000, "data:image/~base64,", saved);
         Product save = productRepository.save(product);
+        optionRepository.save(new Option("옵션1", 200, product));
         return save;
     }
-
 }

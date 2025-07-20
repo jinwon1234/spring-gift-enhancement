@@ -170,8 +170,6 @@ class ProductServiceTest {
         Member member = addMemberCase();
         Product product = addProductCase(member);
 
-
-
         ProductUpdateRequest updateDto = new ProductUpdateRequest("스윙칩", 3500, "data:image/~base64,");
 
         assertThatThrownBy(()->productService.updateProduct(1L, updateDto,  new AuthMember(member.getEmail(), member.getRole())))
@@ -185,6 +183,6 @@ class ProductServiceTest {
     private Product addProductCase(Member member) {
         OptionCreateRequest options = new OptionCreateRequest("옵션1", 10);
         Long id = productService.save(new ProductCreateRequest("스윙칩", 3000, "data:image/~base64,", List.of(options)), member.getEmail());
-        return new Product(id, "스윙칩", 3000, "data:image/~base64,",member);
+        return productService.findById(id);
     }
 }

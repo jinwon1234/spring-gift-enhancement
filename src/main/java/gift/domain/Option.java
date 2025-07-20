@@ -1,7 +1,9 @@
 package gift.domain;
 
-import gift.option.dto.OptionCreateRequest;
+import gift.member.dto.AuthMember;
+import gift.option.dto.OptionUpdateRequest;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(
@@ -29,6 +31,13 @@ public class Option {
         this.product = product;
     }
 
+    public Option(Long id, String name, int quantity, Product product) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
@@ -47,5 +56,9 @@ public class Option {
 
     public Product getProduct() {
         return product;
+    }
+
+    public void changeQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

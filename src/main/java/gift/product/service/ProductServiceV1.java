@@ -79,9 +79,8 @@ public class ProductServiceV1 implements ProductService{
         Product findProduct = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
 
-        Member findMember = memberService.findByEmail(authMember.getEmail());
 
-        checkIsAdminOrOwner(authMember,findMember, findProduct.getMember().getId());
+        memberService.isOwnerOrAdmin(authMember.getEmail(),findProduct.getMember().getId());
 
         productRepository.deleteById(id);
     }
@@ -89,11 +88,10 @@ public class ProductServiceV1 implements ProductService{
     public void updateProduct(Long id, ProductUpdateRequest dto, AuthMember authMember) {
 
 
-        Product findProduct = productRepository.findById(id)
+        Product findProduct = productRepository.findByIdWithOptions(id)
                 .orElseThrow(() -> new NotFoundEntityException("상품이 존재하지 않습니다."));
 
-        Member findMember = memberService.findByEmail(authMember.getEmail());
-        checkIsAdminOrOwner(authMember, findMember, findProduct.getMember().getId());
+        memberService.isOwnerOrAdmin(authMember.getEmail(), findProduct.getMember().getId());
 
         findProduct.changeName(dto.getName());
         findProduct.changePrice(dto.getPrice());
@@ -117,8 +115,8 @@ public class ProductServiceV1 implements ProductService{
         Member findMember = memberService.findByEmail(authMember.getEmail());
 
         return productRepository.findByMemberIdWithOptionsAndPage(findMember.getId(), pageable)
-                .map(p->new ProductResponse(p, p.getOptions()
-                        .stream().map(o->new OptionResponse(o.getId(),o.getName(), o.getQuantity()))
+                .map(p -> new ProductResponse(p, p.getOptions()
+                        .stream().map(o -> new OptionResponse(o.getId(), o.getName(), o.getQuantity()))
                         .toList())
                 );
     }
@@ -128,11 +126,13 @@ public class ProductServiceV1 implements ProductService{
                 .orElseThrow(()->new NotFoundEntityException("존재하는 상품이 아닙니다"));
     }
 
-    private void checkIsAdminOrOwner(AuthMember authMember, Member member,  Long ownerId) {
+    @Override
+    public List<OptionResponse> findAllOptions(AuthMember authMember, Long id) {
 
-        if (authMember.getRole() == Role.ADMIN) return;
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("존재하는 상품이 아닙니다"));
+        memberService.isOwnerOrAdmin(authMember.getEmail(), product.getMember().getId());
 
-        if (!member.getId().equals(ownerId))
-            throw new BadRequestEntityException("자신의 상품이 아닙니다.");
+        return optionService.findByProduct(product);
     }
 }

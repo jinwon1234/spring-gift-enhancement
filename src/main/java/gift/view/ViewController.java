@@ -6,8 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.UUID;
-
 @Controller
 public class ViewController {
 
@@ -26,6 +24,7 @@ public class ViewController {
         return "add-product";
     }
 
+    @OnlyForAdmin
     @GetMapping("/admin/products/new")
     public String addAdminProduct() {
         return "add-admin-product";
@@ -82,6 +81,38 @@ public class ViewController {
         model.addAttribute("memberId", id);
 
         return  "edit-member";
+    }
+
+    @GetMapping("/my/products/{productId}/options/{optionId}")
+    public String editOptionQuantity(@PathVariable Long productId, @PathVariable Long optionId, Model model){
+        model.addAttribute("optionId", optionId);
+        model.addAttribute("productId", productId);
+
+        return "edit-my-product-option";
+    }
+
+    @OnlyForAdmin
+    @GetMapping("/admin/products/{productId}/options/{optionId}")
+    public String editOptionForAdmin(@PathVariable Long productId, @PathVariable Long optionId, Model model){
+        model.addAttribute("optionId", optionId);
+        model.addAttribute("productId", productId);
+
+        return "edit-admin-product-option";
+    }
+
+    @GetMapping("/my/products/{productId}/options")
+    public String editOptionPage(@PathVariable Long productId, Model model){
+        model.addAttribute("productId", productId);
+
+        return "my-product-option";
+    }
+
+    @OnlyForAdmin
+    @GetMapping("/admin/products/{productId}/options")
+    public String editOptionPageForAdmin(@PathVariable Long productId, Model model){
+        model.addAttribute("productId", productId);
+
+        return "admin-product-option";
     }
 
 }

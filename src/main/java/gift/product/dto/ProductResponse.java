@@ -24,6 +24,14 @@ public class ProductResponse {
         this.options = options;
     }
 
+    public ProductResponse(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.imageURL = product.getImageUrl();
+        this.memberId = product.getMember().getId();
+    }
+
     protected ProductResponse() {}
   
     public Long getId() {
