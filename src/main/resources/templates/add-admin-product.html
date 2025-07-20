@@ -69,6 +69,7 @@
                             const errors = [];
                             const fieldErrors = jqXHR.responseJSON.fieldErrors;
                             const objectErrors = jqXHR.responseJSON.objectErrors;
+                            const mesg = jqXHR.responseJSON.message;
 
                             if (fieldErrors) {
                                 for (const key in fieldErrors) {
@@ -80,6 +81,10 @@
                                 for (const err of objectErrors) {
                                     errors.push(err.message);
                                 }
+                            }
+
+                            if (mesg) {
+                                errors.push(mesg)
                             }
 
                             if (errors.length > 0) {

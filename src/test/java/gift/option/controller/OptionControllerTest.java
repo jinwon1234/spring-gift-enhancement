@@ -6,6 +6,8 @@ import gift.domain.Product;
 import gift.domain.Role;
 import gift.jwt.JWTUtil;
 import gift.member.repository.MemberRepository;
+import gift.option.dto.OptionCreateListRequest;
+import gift.option.dto.OptionCreateRequest;
 import gift.option.dto.OptionResponse;
 import gift.option.dto.OptionUpdateRequest;
 import gift.option.repository.OptionRepository;
@@ -21,7 +23,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -123,6 +128,36 @@ class OptionControllerTest {
         assertThat(response.getBody().id()).isEqualTo(save.getId());
         assertThat(response.getBody().name()).isEqualTo(save.getName());
         assertThat(response.getBody().quantity()).isEqualTo(save.getQuantity());
+
+    }
+
+    @Test
+    @DisplayName("옵션 추가 성공")
+    void addOptionSuccess() {
+        optionRepository.save(new Option("옵션1", 300, product));
+
+        ResponseEntity<Void> response = restClient.post()
+                .body(new OptionCreateListRequest(product.getId()
+                        , List.of(new OptionCreateRequest("옵션2",10))))
+                .retrieve()
+                .toEntity(Void.class);
+
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    }
+
+    @Test
+    @DisplayName("옵션 추가 실패 - 중복된 옵션 이름")
+    void addOptionFail() {
+        optionRepository.save(new Option("옵션1", 300, product));
+
+        assertThatThrownBy(()->restClient.post()
+                .body(new OptionCreateListRequest(product.getId()
+                        , List.of(new OptionCreateRequest("옵션1",10))))
+                .retrieve()
+                .toEntity(Void.class)
+        ).isInstanceOf(HttpClientErrorException.BadRequest.class);
 
     }
 }

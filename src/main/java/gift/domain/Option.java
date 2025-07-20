@@ -1,9 +1,6 @@
 package gift.domain;
 
-import gift.member.dto.AuthMember;
-import gift.option.dto.OptionUpdateRequest;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(

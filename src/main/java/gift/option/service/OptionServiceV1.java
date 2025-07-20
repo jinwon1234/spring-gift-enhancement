@@ -2,6 +2,7 @@ package gift.option.service;
 
 import gift.domain.Option;
 import gift.domain.Product;
+import gift.global.exception.BadRequestEntityException;
 import gift.global.exception.NotFoundEntityException;
 import gift.member.dto.AuthMember;
 import gift.member.service.MemberService;
@@ -10,6 +11,7 @@ import gift.option.dto.OptionResponse;
 import gift.option.dto.OptionUpdateRequest;
 import gift.option.repository.OptionRepository;
 import gift.product.service.ProductService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +34,14 @@ public class OptionServiceV1 implements OptionService{
 
         if (options.isEmpty()) return;
 
-        options.forEach(option -> {
-            Option save = optionRepository.save(new Option(option.optionName(), option.quantity(), product));
-            product.getOptions().add(save);
-        });
+        try {
+            options.forEach(option -> {
+                Option save = optionRepository.save(new Option(option.optionName(), option.quantity(), product));
+                product.getOptions().add(save);
+            });
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestEntityException("중복된 옵션 이름은 등록할 수 없습니다.");
+        }
     }
 
     @Override
