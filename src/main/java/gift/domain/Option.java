@@ -58,4 +58,8 @@ public class Option {
     public void changeQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public void subtractQuantity(int quantity) {
+        this.quantity -= quantity;
+    }
 }
