@@ -129,10 +129,11 @@ public class ProductServiceV1 implements ProductService{
     @Override
     public List<OptionResponse> findAllOptions(AuthMember authMember, Long id) {
 
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdWithOptions(id)
                 .orElseThrow(() -> new NotFoundEntityException("존재하는 상품이 아닙니다"));
         memberService.isOwnerOrAdmin(authMember.getEmail(), product.getMember().getId());
 
-        return optionService.findByProduct(product);
+        return product.getOptions().stream().map(o->new OptionResponse(o.getId(),o.getName(),o.getQuantity()))
+                .toList();
     }
 }
