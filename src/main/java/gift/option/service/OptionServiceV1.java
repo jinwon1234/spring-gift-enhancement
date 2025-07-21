@@ -36,14 +36,15 @@ public class OptionServiceV1 implements OptionService{
 
         if (options.isEmpty()) return;
 
-        try {
-            options.forEach(option -> {
-                Option save = optionRepository.save(new Option(option.optionName(), option.quantity(), product));
-                product.getOptions().add(save);
-            });
-        } catch (DataIntegrityViolationException e) {
+        List<String> optionNames = options.stream().map(OptionCreateRequest::optionName).toList();
+
+        if (optionRepository.countByProductIdAndOptionNames(optionNames,product.getId()) > 0)
             throw new BadRequestEntityException("중복된 옵션 이름은 등록할 수 없습니다.");
-        }
+
+        options.forEach(option -> {
+            Option save = optionRepository.save(new Option(option.optionName(), option.quantity(), product));
+            product.getOptions().add(save);
+        });
     }
 
     @Override

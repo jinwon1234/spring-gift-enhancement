@@ -15,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,5 +71,22 @@ class OptionRepositoryTest {
         assertThatThrownBy(()->optionRepository.findById(save.getId())
                 .orElseThrow(()-> new NotFoundEntityException("논리삭제 시 조회 안됨 - @SQLRestriction"))
         ).isInstanceOf(NotFoundEntityException.class);
+    }
+
+    @Test
+    @DisplayName("중복된 이름 숫자 조회")
+    void countByProductIdAndOptionNames() {
+        // given
+        Member member = new Member("ljw2109@naver.com", "Qwer1234!!", Role.REGULAR);
+        Product product = new Product("스윙칩", 3000, "image", member);
+        memberRepository.save(member);
+        productRepository.save(product);
+        Option save = optionRepository.save(new Option("옵션1", 100, product));
+
+        // when
+        long result = optionRepository.countByProductIdAndOptionNames(List.of("옵션1"), product.getId());
+
+        // then
+        assertThat(result).isEqualTo(1L);
     }
 }

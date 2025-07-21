@@ -8,6 +8,7 @@ import gift.global.exception.BadRequestEntityException;
 import gift.global.exception.NotFoundEntityException;
 import gift.member.dto.AuthMember;
 import gift.member.service.MemberService;
+import gift.option.dto.OptionCreateRequest;
 import gift.option.dto.OptionResponse;
 import gift.option.dto.OptionUpdateRequest;
 import gift.option.repository.OptionRepository;
@@ -173,6 +174,24 @@ class OptionServiceV1Test {
         assertThat(result.size()).isEqualTo(1);
         verify(optionRepository).findByProductId(product.getId());
         verifyNoMoreInteractions(optionRepository);
+    }
+
+    @Test
+    @DisplayName("옵션 추가 실패 - 중복된 옵션 이름")
+    void addOptionFail() {
+        // given
+        Member member = new Member(1L , "ljw2109@naver.com", "Qwer1234!!", Role.REGULAR);
+        Product product = new Product(1L, "스윙칩", 3000, "image", member);
+
+        given(optionRepository.countByProductIdAndOptionNames(any(), any()))
+                .willReturn(1L);
+
+        // when & then
+        assertThatThrownBy(()->optionServiceV1.save(List.of(new OptionCreateRequest("옵션1", 30)), product, new AuthMember(member.getEmail(), member.getRole())))
+                .isInstanceOf(BadRequestEntityException.class);
+        verify(memberService).isOwnerOrAdmin(any(), any());
+        verify(optionRepository).countByProductIdAndOptionNames(any(), any());
+        verifyNoMoreInteractions(optionRepository, memberService);
     }
 
 }

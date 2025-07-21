@@ -15,4 +15,7 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
 
     @Query("select o from Option o where o.product.id = :productId")
     List<Option> findByProductId(Long productId);
+
+    @Query("select count(o) from Option o where o.product.id = :productId and o.name in (:optionNames)")
+    long countByProductIdAndOptionNames(List<String> optionNames, Long productId);
 }
