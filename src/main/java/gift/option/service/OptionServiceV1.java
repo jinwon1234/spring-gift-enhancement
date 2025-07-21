@@ -10,8 +10,6 @@ import gift.option.dto.OptionCreateRequest;
 import gift.option.dto.OptionResponse;
 import gift.option.dto.OptionUpdateRequest;
 import gift.option.repository.OptionRepository;
-import gift.product.service.ProductService;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,11 +50,14 @@ public class OptionServiceV1 implements OptionService{
 
         Option findOption = validateIsOwner(authMember, id);
 
-        if (findOption.getProduct().getOptions().size() == 1)
+        List<Option> allOptions = findOption.getProduct().getOptions();
+
+        if (allOptions.size() == 1){
             throw new BadRequestEntityException("상품은 항상 하나 이상의 옵션이 존재해야합니다.");
+        }
 
         optionRepository.deleteById(id);
-
+        allOptions.remove(findOption);
     }
 
     @Override
