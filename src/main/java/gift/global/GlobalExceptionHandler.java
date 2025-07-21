@@ -55,7 +55,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestEntityException.class)
     public ResponseEntity<Map<String, String>> handleBadRequestEntityException(BadRequestEntityException ex) {
-        System.out.println("Occured!!");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", ex.getMessage()));
     }
 }
