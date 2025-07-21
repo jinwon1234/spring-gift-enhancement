@@ -50,7 +50,10 @@ public class OptionServiceV1 implements OptionService{
     @Override
     public void deleteById(AuthMember authMember, Long id) {
 
-        validateIsOwner(authMember, id);
+        Option findOption = validateIsOwner(authMember, id);
+
+        if (findOption.getProduct().getOptions().size() == 1)
+            throw new BadRequestEntityException("상품은 항상 하나 이상의 옵션이 존재해야합니다.");
 
         optionRepository.deleteById(id);
 

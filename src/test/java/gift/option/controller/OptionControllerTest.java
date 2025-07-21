@@ -85,6 +85,7 @@ class OptionControllerTest {
     void deleteOptionSuccess() {
 
         Option save = optionRepository.save(new Option("옵션1", 300, product));
+        optionRepository.save(new Option("옵션2", 400, product));
 
         ResponseEntity<Void> response = restClient.delete()
                 .uri("/{id}", save.getId())
@@ -92,6 +93,19 @@ class OptionControllerTest {
                 .toEntity(Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("옵션 제거 실패 - 옵션 1개가 필수")
+    void deleteOptionFail() {
+
+        Option save = optionRepository.save(new Option("옵션1", 300, product));
+
+        assertThatThrownBy(()->restClient.delete()
+                .uri("/{id}", save.getId())
+                .retrieve()
+                .toEntity(Void.class))
+                .isInstanceOf(HttpClientErrorException.BadRequest.class);
     }
 
     @Test
